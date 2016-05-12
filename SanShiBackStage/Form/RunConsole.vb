@@ -227,8 +227,7 @@ Public Class RunConsole
 
 
 
-            'arrobjParaOfBGWorker = {listbsdipBSInsertPara, arrobjParaOfBSCPara, arrobjParaOfBGWorkerForIndexOfTraffic}
-            arrobjParaOfBGWorker = {Nothing, arrobjParaOfBSCPara, Nothing}
+            arrobjParaOfBGWorker = {listbsdipBSInsertPara, arrobjParaOfBSCPara, arrobjParaOfBGWorkerForIndexOfTraffic}
 
             bwGetEnterWorker.RunWorkerAsync(arrobjParaOfBGWorker)
 
@@ -273,20 +272,25 @@ Public Class RunConsole
             If listbsdipBSInsertPara IsNot Nothing Then
 
                 For Each bsdipOneOfPara In listbsdipBSInsertPara
-                    objResult = bsdlCommonLibraryInRun.BulkCopyToSQLServer(bsdipOneOfPara.strDataTableName, bsdipOneOfPara.strUpDatePath, bsdipOneOfPara.strFileSuffix, bsdipOneOfPara.strIFExcelThenSheetName, Convert.ToInt32(bsdipOneOfPara.intMultiFile), bsdipOneOfPara.strUpDateSource, Convert.ToInt32(bsdipOneOfPara.strDataTableID))
-                    If IsNumeric(objResult) Then
+                    Try
 
-                        If objResult = 0 Then
-                            strOutput += bsdipOneOfPara.strConfigName & " ×-找不到数据" & vbCrLf
-                        ElseIf objResult = 88 Then
-                            strOutput += bsdipOneOfPara.strConfigName & " √-已经完成入数了" & vbCrLf
-                        ElseIf objResult = -44 Then
-                            strOutput += bsdipOneOfPara.strConfigName & " ×-入数有问题！！" & vbCrLf
+                        objResult = bsdlCommonLibraryInRun.BulkCopyToSQLServer(bsdipOneOfPara.strDataTableName, bsdipOneOfPara.strUpDatePath, bsdipOneOfPara.strFileSuffix, bsdipOneOfPara.strIFExcelThenSheetName, Convert.ToInt32(bsdipOneOfPara.intMultiFile), bsdipOneOfPara.strUpDateSource, Convert.ToInt32(bsdipOneOfPara.strDataTableID))
+                        If IsNumeric(objResult) Then
+
+                            If objResult = 0 Then
+                                strOutput += bsdipOneOfPara.strConfigName & " ×-找不到数据" & vbCrLf
+                            ElseIf objResult = 88 Then
+                                strOutput += bsdipOneOfPara.strConfigName & " √-已经完成入数了" & vbCrLf
+                            ElseIf objResult = -44 Then
+                                strOutput += bsdipOneOfPara.strConfigName & " ×-入数有问题！！" & vbCrLf
+                            End If
+                        Else
+                            strOutput += "  ×-入数有问题！！问题是: " & objResult & vbCrLf
                         End If
-                    Else
-                        strOutput += "  ×-入数有问题！！问题是: " & objResult & vbCrLf
-                    End If
-                    bwGetEnterWorker.ReportProgress(0)
+                        bwGetEnterWorker.ReportProgress(0)
+                    Catch ex As Exception
+
+                    End Try
 
                 Next
             Else
@@ -301,34 +305,44 @@ Public Class RunConsole
                 If arrobjParaOfBSCPara.Count > 0 Then
 
                     If arrobjParaOfBSCPara(4) Then
-                        objResult = bscpCommonLibraryInRun.HandelDailyAccessBSCPara(arrobjParaOfBSCPara(0), "dt_GSMP_BSC_Daily", arrobjParaOfBSCPara(1), arrobjParaOfBSCPara(2))
-                        If IsNumeric(objResult) Then
+                        Try
 
-                            If objResult = 88 Then
-                                strOutput += "√-例行P BSC级数据 已经完成入数了，文件是:" & IO.Path.GetFileName(arrobjParaOfBSCPara(0)) & "" & vbCrLf
-                            ElseIf objResult = -44 Then
-                                strOutput += "×-例行P BSC级数据 入数有问题！！文件是:" & IO.Path.GetFileName(arrobjParaOfBSCPara(0)) & "" & vbCrLf
+                            objResult = bscpCommonLibraryInRun.HandelDailyAccessBSCPara(arrobjParaOfBSCPara(0), "dt_GSMP_BSC_Daily", arrobjParaOfBSCPara(1), arrobjParaOfBSCPara(2))
+                            If IsNumeric(objResult) Then
+
+                                If objResult = 88 Then
+                                    strOutput += "√-例行P BSC级数据 已经完成入数了，文件是:" & IO.Path.GetFileName(arrobjParaOfBSCPara(0)) & "" & vbCrLf
+                                ElseIf objResult = -44 Then
+                                    strOutput += "×-例行P BSC级数据 入数有问题！！文件是:" & IO.Path.GetFileName(arrobjParaOfBSCPara(0)) & "" & vbCrLf
+                                End If
+                            Else
+                                strOutput += "×-" & IO.Path.GetFileName(arrobjParaOfBSCPara(0)) & " 入数有问题！！问题是: " & objResult.ToString & vbCrLf
                             End If
-                        Else
-                            strOutput += "×-" & IO.Path.GetFileName(arrobjParaOfBSCPara(0)) & " 入数有问题！！问题是: " & objResult.ToString & vbCrLf
-                        End If
-                        bsdlCommonLibraryInRun.UpdateParaDate("GSM Daily Para", arrobjParaOfBSCPara(1))
+                            bsdlCommonLibraryInRun.UpdateParaDate("GSM Daily Para", arrobjParaOfBSCPara(1))
+                        Catch ex As Exception
+
+                        End Try
 
                     End If
                     bwGetEnterWorker.ReportProgress(0)
 
                     If arrobjParaOfBSCPara(5) Then
-                        objResult = gsmcCommonLibraryInRun.HandelDailyAccessGSMCellPara(arrobjParaOfBSCPara(0), "dt_GSMP_Cell_Daily", arrobjParaOfBSCPara(1), arrobjParaOfBSCPara(3), "SELECT [CELL],[ID] FROM [SanShi_BaseSationDetails].[dbo].[dt_GSM_ID]")
-                        If IsNumeric(objResult) Then
+                        Try
 
-                            If objResult = 88 Then
-                                strOutput += "√-例行P Cell级数据 已经完成入数了，文件是:" & IO.Path.GetFileName(arrobjParaOfBSCPara(0)) & "" & vbCrLf
-                            ElseIf objResult = -44 Then
-                                strOutput += "×-例行P Cell级数据 入数有问题！！文件是:" & IO.Path.GetFileName(arrobjParaOfBSCPara(0)) & "" & vbCrLf
+                            objResult = gsmcCommonLibraryInRun.HandelDailyAccessGSMCellPara(arrobjParaOfBSCPara(0), "dt_GSMP_Cell_Daily", arrobjParaOfBSCPara(1), arrobjParaOfBSCPara(3), "SELECT [CELL],[ID] FROM [SanShi_BaseSationDetails].[dbo].[dt_GSM_ID]")
+                            If IsNumeric(objResult) Then
+
+                                If objResult = 88 Then
+                                    strOutput += "√-例行P Cell级数据 已经完成入数了，文件是:" & IO.Path.GetFileName(arrobjParaOfBSCPara(0)) & "" & vbCrLf
+                                ElseIf objResult = -44 Then
+                                    strOutput += "×-例行P Cell级数据 入数有问题！！文件是:" & IO.Path.GetFileName(arrobjParaOfBSCPara(0)) & "" & vbCrLf
+                                End If
+                            Else
+                                strOutput += "×-" & IO.Path.GetFileName(arrobjParaOfBSCPara(0)) & " 入数有问题！！问题是: " & objResult.ToString & vbCrLf
                             End If
-                        Else
-                            strOutput += "×-" & IO.Path.GetFileName(arrobjParaOfBSCPara(0)) & " 入数有问题！！问题是: " & objResult.ToString & vbCrLf
-                        End If
+                        Catch ex As Exception
+
+                        End Try
                     End If
                     bwGetEnterWorker.ReportProgress(0)
                 End If
@@ -346,23 +360,28 @@ Public Class RunConsole
                     dtFormat = sqllSSLibrary.ReturnFormat("dt_GSM_Daily_Grib_Traffic", CommonLibrary.GetSQLServerConnect("ConnectionTrafficDB"))
 
                     For Each strtmpDir In strDir
-                        exlExl = New LoadExcel(strtmpDir)
-                        exlExl.GetInformation()
-                        strIFExcelThenSheetName = exlExl.strSheets(0)
+                        Try
 
-                        dtExl = exlExl.GetData(strIFExcelThenSheetName)
-                        dtData = CommonLibrary.ReturnNewNormalDT(dtExl, dtFormat)
-                        sqllSSLibrary.BlukInsert("dt_GSM_Daily_Grib_Traffic", dtData, CommonLibrary.GetSQLServerConnect("ConnectionTrafficDB"))
+                            exlExl = New LoadExcel(strtmpDir)
+                            exlExl.GetInformation()
+                            strIFExcelThenSheetName = exlExl.strSheets(0)
 
-                        If exlExl.strSheets.Count > 0 Then
-                            dtData.Dispose()
-                            dtData = Nothing
-                        End If
-                        exlExl.Dispose()
-                        exlExl = Nothing
+                            dtExl = exlExl.GetData(strIFExcelThenSheetName)
+                            dtData = CommonLibrary.ReturnNewNormalDT(dtExl, dtFormat)
+                            sqllSSLibrary.BlukInsert("dt_GSM_Daily_Grib_Traffic", dtData, CommonLibrary.GetSQLServerConnect("ConnectionTrafficDB"))
 
-                        strOutput += "√-已完成文件 : " & IO.Path.GetFileName(strtmpDir) & "的入数" & vbCrLf
-                        bwGetEnterWorker.ReportProgress(0)
+                            If exlExl.strSheets.Count > 0 Then
+                                dtData.Dispose()
+                                dtData = Nothing
+                            End If
+                            exlExl.Dispose()
+                            exlExl = Nothing
+
+                            strOutput += "√-已完成文件 : " & IO.Path.GetFileName(strtmpDir) & "的入数" & vbCrLf
+                            bwGetEnterWorker.ReportProgress(0)
+                        Catch ex As Exception
+
+                        End Try
 
                     Next
 
