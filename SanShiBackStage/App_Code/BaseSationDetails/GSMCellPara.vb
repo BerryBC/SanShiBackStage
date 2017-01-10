@@ -38,6 +38,11 @@ Public Class GSMCellPara
         Dim listdCellID As Dictionary(Of String, String)
         Dim intNumberOfFN As Integer
         Dim tmpType As Type
+        Dim dtDataForLog As DataTable
+        Dim dtFormatForLog As DataTable
+        Dim drtmpBscListRowForLog As DataRow
+
+
 
         Try
 
@@ -167,8 +172,17 @@ Public Class GSMCellPara
             Next
 
             sqllSSLibrary.BlukInsert(strSQLServerTableName, dtData, CommonLibrary.GetSQLServerConnect("ConnectionBaseStationDetailsDB"))
+            '----------------------
+            dtFormatForLog = sqllSSLibrary.ReturnFormat("dt_GSMP_BSC_Daily_ChangeLog", CommonLibrary.GetSQLServerConnect("ConnectionLogDB"))
+            dtFormatForLog.Rows.Clear()
+            dtDataForLog = dtFormatForLog
+            '----------------------
+
+
 
             For Each drtmpBscListRow In dtData.Rows
+
+
                 For Each boptmpBSCPara In listOriPara
                     If boptmpBSCPara.strBSCName = drtmpBscListRow(0).ToString Then
                         drtmpBSCCompareOf = boptmpBSCPara.drParaRow
@@ -182,21 +196,73 @@ Public Class GSMCellPara
 
                             If drtmpBSCCompareOf(intI) <> drtmpBscListRow(intI) Then
                                 '-----------记录修改问题
-                                ChangeCellParaLog(strSQLServerTableName, drtmpBscListRow(0).ToString, dtFormat.Columns(intI).ColumnName, drtmpBSCCompareOf(intI) & "  -->  " & drtmpBscListRow(intI), dateWhatTimeIsPara)
+                                'ChangeCellParaLog(strSQLServerTableName, drtmpBscListRow(0).ToString, dtFormat.Columns(intI).ColumnName, drtmpBSCCompareOf(intI) & "  -->  " & drtmpBscListRow(intI), dateWhatTimeIsPara)
 
+                                drtmpBscListRowForLog = dtFormatForLog.NewRow
+                                drtmpBscListRowForLog(0) = strSQLServerTableName
+                                drtmpBscListRowForLog(1) = drtmpBscListRow(0).ToString
+                                drtmpBscListRowForLog(2) = dtFormat.Columns(intI).ColumnName
+                                drtmpBscListRowForLog(3) = drtmpBSCCompareOf(intI) & "  -->  " & drtmpBscListRow(intI)
+                                drtmpBscListRowForLog(4) = dateWhatTimeIsPara
+                                drtmpBscListRowForLog(5) = drtmpBSCCompareOf(intI)
+                                drtmpBscListRowForLog(6) = drtmpBscListRow(intI)
+                                dtDataForLog.Rows.Add(drtmpBscListRowForLog)
                             End If
                         ElseIf ((drtmpBscListRow(intI) IsNot Nothing) And (drtmpBscListRow(intI) IsNot DBNull.Value) And ((drtmpBSCCompareOf(intI) Is Nothing) Or (drtmpBSCCompareOf(intI) Is DBNull.Value))) Then
-                            ChangeCellParaLog(strSQLServerTableName, drtmpBscListRow(0).ToString, dtFormat.Columns(intI).ColumnName, "前期缺数，现网值为 -->  " & drtmpBscListRow(intI), dateWhatTimeIsPara)
+                            'ChangeCellParaLog(strSQLServerTableName, drtmpBscListRow(0).ToString, dtFormat.Columns(intI).ColumnName, "前期缺数，现网值为 -->  " & drtmpBscListRow(intI), dateWhatTimeIsPara)
 
-                        ElseIf ((drtmpBSCCompareOf(intI) IsNot Nothing) And (drtmpBSCCompareOf(intI) IsNot DBNull.Value) And ((drtmpBscListRow(intI) Is Nothing) Or (drtmpBscListRow(intI) Is DBNull.Value))) Then
-                            ChangeCellParaLog(strSQLServerTableName, drtmpBscListRow(0).ToString, dtFormat.Columns(intI).ColumnName, "现网缺数", dateWhatTimeIsPara)
+
+                            drtmpBscListRowForLog = dtFormatForLog.NewRow
+                            drtmpBscListRowForLog(0) = strSQLServerTableName
+                            drtmpBscListRowForLog(1) = drtmpBscListRow(0).ToString
+                            drtmpBscListRowForLog(2) = dtFormat.Columns(intI).ColumnName
+                            drtmpBscListRowForLog(3) = "前期缺数，现网值为 -->  " & drtmpBscListRow(intI)
+                            drtmpBscListRowForLog(4) = dateWhatTimeIsPara
+                            drtmpBscListRowForLog(5) = ""
+                            drtmpBscListRowForLog(6) = drtmpBscListRow(intI)
+
+                            dtDataForLog.Rows.Add(drtmpBscListRowForLog)
+
+
+                            '-------------现网缺数不记录-------------
+                            'ElseIf ((drtmpBSCCompareOf(intI) IsNot Nothing) And (drtmpBSCCompareOf(intI) IsNot DBNull.Value) And ((drtmpBscListRow(intI) Is Nothing) Or (drtmpBscListRow(intI) Is DBNull.Value))) Then
+                            '    'ChangeCellParaLog(strSQLServerTableName, drtmpBscListRow(0).ToString, dtFormat.Columns(intI).ColumnName, "现网缺数", dateWhatTimeIsPara)
+
+
+                            '    drtmpBscListRowForLog = dtFormatForLog.NewRow
+                            '    drtmpBscListRowForLog(0) = strSQLServerTableName
+                            '    drtmpBscListRowForLog(1) = drtmpBscListRow(0).ToString
+                            '    drtmpBscListRowForLog(2) = dtFormat.Columns(intI).ColumnName
+                            '    drtmpBscListRowForLog(3) = "现网缺数"
+                            '    drtmpBscListRowForLog(4) = dateWhatTimeIsPara
+                            '    dtDataForLog.Rows.Add(drtmpBscListRowForLog)
+
+
+
                         End If
                     Next
+
                     drtmpBSCCompareOf = Nothing
-                Else
-                    ChangeCellParaLog(strSQLServerTableName, drtmpBscListRow(0).ToString, "", "该网元前期缺数", dateWhatTimeIsPara)
+                    '-------------前期缺数不记录-------------
+                    'Else
+                    '    'ChangeCellParaLog(strSQLServerTableName, drtmpBscListRow(0).ToString, "", "该网元前期缺数", dateWhatTimeIsPara)
+
+                    '    drtmpBscListRowForLog = dtFormatForLog.NewRow
+                    '    drtmpBscListRowForLog(0) = strSQLServerTableName
+                    '    drtmpBscListRowForLog(1) = drtmpBscListRow(0).ToString
+                    '    drtmpBscListRowForLog(2) = ""
+                    '    drtmpBscListRowForLog(3) = "该网元前期缺数"
+                    '    drtmpBscListRowForLog(4) = dateWhatTimeIsPara
+                    '    dtDataForLog.Rows.Add(drtmpBscListRowForLog)
+
+
                 End If
             Next
+
+
+            '----------------------
+            sqllSSLibrary.BlukInsert("dt_GSMP_BSC_Daily_ChangeLog", dtDataForLog, CommonLibrary.GetSQLServerConnect("ConnectionLogDB"))
+            '----------------------
 
 
             pasTmpParaAndSQL = Nothing

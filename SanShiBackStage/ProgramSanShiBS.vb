@@ -111,6 +111,7 @@ Module ProgramSanShiBS
 
             '创建Timer控件
             timerToRun = New System.Windows.Forms.Timer()
+            'timerToRun.Interval = 1000
             timerToRun.Interval = 60000
             timerToRun.Enabled = True
 

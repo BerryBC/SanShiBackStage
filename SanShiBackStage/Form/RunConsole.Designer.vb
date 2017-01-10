@@ -26,6 +26,10 @@ Partial Class RunConsole
         Me.lstConsole = New System.Windows.Forms.ListBox()
         Me.btnGo = New System.Windows.Forms.Button()
         Me.timerShowRuning = New System.Windows.Forms.Timer(Me.components)
+        Me.timerGoSave = New System.Windows.Forms.Timer(Me.components)
+        Me.wbGetNAMS = New System.Windows.Forms.WebBrowser()
+        Me.btnTest = New System.Windows.Forms.Button()
+        Me.timerRefreshNAMS = New System.Windows.Forms.Timer(Me.components)
         Me.SuspendLayout()
         '
         'lstConsole
@@ -51,11 +55,39 @@ Partial Class RunConsole
         '
         Me.timerShowRuning.Interval = 1000
         '
+        'timerGoSave
+        '
+        Me.timerGoSave.Interval = 1000
+        '
+        'wbGetNAMS
+        '
+        Me.wbGetNAMS.Location = New System.Drawing.Point(622, 295)
+        Me.wbGetNAMS.MinimumSize = New System.Drawing.Size(20, 20)
+        Me.wbGetNAMS.Name = "wbGetNAMS"
+        Me.wbGetNAMS.Size = New System.Drawing.Size(250, 250)
+        Me.wbGetNAMS.TabIndex = 2
+        Me.wbGetNAMS.Visible = False
+        '
+        'btnTest
+        '
+        Me.btnTest.Location = New System.Drawing.Point(12, 358)
+        Me.btnTest.Name = "btnTest"
+        Me.btnTest.Size = New System.Drawing.Size(516, 26)
+        Me.btnTest.TabIndex = 3
+        Me.btnTest.Text = "Test！！"
+        Me.btnTest.UseVisualStyleBackColor = True
+        '
+        'timerRefreshNAMS
+        '
+        Me.timerRefreshNAMS.Interval = 1000
+        '
         'RunConsole
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(540, 312)
+        Me.ClientSize = New System.Drawing.Size(540, 306)
+        Me.Controls.Add(Me.btnTest)
+        Me.Controls.Add(Me.wbGetNAMS)
         Me.Controls.Add(Me.btnGo)
         Me.Controls.Add(Me.lstConsole)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
@@ -69,4 +101,8 @@ Partial Class RunConsole
     Friend WithEvents lstConsole As System.Windows.Forms.ListBox
     Friend WithEvents btnGo As System.Windows.Forms.Button
     Friend WithEvents timerShowRuning As System.Windows.Forms.Timer
+    Friend WithEvents timerGoSave As System.Windows.Forms.Timer
+    Friend WithEvents wbGetNAMS As System.Windows.Forms.WebBrowser
+    Friend WithEvents btnTest As System.Windows.Forms.Button
+    Friend WithEvents timerRefreshNAMS As System.Windows.Forms.Timer
 End Class

@@ -212,8 +212,13 @@ Public Class CommonLibrary
             End If
         Next i
 
-        If dtFormat.Columns(0).ColumnName = "msc_id" And dtFormat.Columns(3).ColumnName = "BSIC" Then
-            bolIsNetworkSupport = True
+        If dtFormat.Columns.Count >= 4 Then
+
+            If dtFormat.Columns(0).ColumnName = "msc_id" And dtFormat.Columns(3).ColumnName = "BSIC" Then
+                bolIsNetworkSupport = True
+            Else
+                bolIsNetworkSupport = False
+            End If
         Else
             bolIsNetworkSupport = False
         End If
@@ -383,13 +388,13 @@ Public Class CommonLibrary
             strWhichDB = ""
             Select Case strDateBase
                 Case "ConnectionUserDB"
-                    strWhichDB = "Server=GZDWCUIBINGLONG\BERRYSQLSERVER;DataBase=SanShi_User;uid=sa;pwd=Nj@321"
+                    strWhichDB = "Server=GZDWCUIBINGLONG\BERRYBCSQLSERVER;DataBase=SanShi_User;uid=sa;pwd=Nj@321"
                 Case "ConnectionLogDB"
-                    strWhichDB = "Server=GZDWCUIBINGLONG\BERRYSQLSERVER;DataBase=SanShi_Log;uid=sa;pwd=Nj@321"
+                    strWhichDB = "Server=GZDWCUIBINGLONG\BERRYBCSQLSERVER;DataBase=SanShi_Log;uid=sa;pwd=Nj@321"
                 Case "ConnectionBaseStationDetailsDB"
-                    strWhichDB = "Server=GZDWCUIBINGLONG\BERRYSQLSERVER;DataBase=SanShi_BaseSationDetails;uid=sa;pwd=Nj@321"
+                    strWhichDB = "Server=GZDWCUIBINGLONG\BERRYBCSQLSERVER;DataBase=SanShi_BaseSationDetails;uid=sa;pwd=Nj@321"
                 Case "ConnectionTrafficDB"
-                    strWhichDB = "Server=GZDWCUIBINGLONG\BERRYSQLSERVER;DataBase=SanShi_Traffic;uid=sa;pwd=Nj@321"
+                    strWhichDB = "Server=GZDWCUIBINGLONG\BERRYBCSQLSERVER;DataBase=SanShi_Traffic;uid=sa;pwd=Nj@321"
             End Select
 
 
